@@ -1,18 +1,7 @@
-**therian** is a "next-generation Java Object transformation library."
+**uelbox** is a toolbox for working with Java Unified Expression Language (UEL).
 
-This codebase is currently under development.  Some features and priorities:
-
-- Deep awareness of Java Unified EL for smooth integration into the JEE stack
-- Strong typing
-- Fluent API
-- Easy extensibility
-
----
-
-YourKit has generously granted **therian** developers the use of its full-featured Java Profiler under its OSS licensing terms, yielding substantial performance improvements for you!
-
-YourKit, LLC is the creator of innovative and intelligent tools for profiling
-Java and .NET applications. Take a look at YourKit's leading software products:
-
- - [YourKit Java Profiler] (http://www.yourkit.com/java/profiler/index.jsp) and
- - [YourKit .NET Profiler] (http://www.yourkit.com/.net/profiler/index.jsp)
+The primary offering is a set of wrappers for decorating instances of the
+various classes that comprise the Java Unified EL specification. These can be
+used to piggyback onto a UEL implementation's processing of a given
+expression. The basic concepts of this codebase were inspired by parts of
+Apache Myfaces's Extensions Validator component.
