@@ -13,13 +13,14 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package therian.uelbox;
+package uelbox;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.el.ELContext;
 import javax.el.ELResolver;
 import javax.el.ExpressionFactory;
@@ -29,10 +30,10 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import therian.uelbox.HelperELContext;
-import therian.uelbox.HelperELResolver;
-import therian.uelbox.SimpleELContext;
-import therian.uelbox.UEL;
+import uelbox.HelperELContext;
+import uelbox.HelperELResolver;
+import uelbox.SimpleELContext;
+import uelbox.UEL;
 
 /**
  * Test HelperELContext / HelperELResolver.

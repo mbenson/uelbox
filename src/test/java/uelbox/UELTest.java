@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package therian.uelbox;
+package uelbox;
 
 import javax.el.ELContext;
 import javax.el.ExpressionFactory;
@@ -22,8 +22,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import therian.uelbox.SimpleELContext;
-import therian.uelbox.UEL;
+import uelbox.SimpleELContext;
+import uelbox.UEL;
 
 /**
  * Test {@link UEL}.

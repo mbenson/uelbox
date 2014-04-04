@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package therian.uelbox;
+package uelbox;
 
 import java.lang.reflect.Method;
 import javax.el.ArrayELResolver;
