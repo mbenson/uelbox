@@ -194,13 +194,6 @@
               <goal>jar</goal>
             </goals>
           </execution>
-          <execution>
-            <id>generate-javadoc</id>
-            <phase>deploy</phase>
-            <goals>
-              <goal>javadoc</goal>
-            </goals>
-          </execution>
         </executions>
       </plugin>
     </plugins>
