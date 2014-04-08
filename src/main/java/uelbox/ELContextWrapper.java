@@ -93,8 +93,8 @@ public abstract class ELContextWrapper extends ELContext {
      * Convenience method to return a typed context object when key resolves per documented convention to an object of
      * the same type.
      * 
-     * @param key
      * @param <T>
+     * @param key
      * @return T
      * @see ELContext#getContext(Class)
      */
@@ -102,4 +102,18 @@ public abstract class ELContextWrapper extends ELContext {
         return UEL.getContext(this, key);
     }
 
+    /**
+     * Convenience method to return a typed context object when key resolves per documented convention to an object of
+     * the same type.
+     * 
+     * @param <T>
+     * @param key
+     * @param defaultValue if absent
+     * @return T
+     * @see ELContext#getContext(Class)
+     */
+    public final <T> T getTypedContext(Class<T> key, T defaultValue) {
+        return UEL.getContext(this, key, defaultValue);
+    }
+    
 }

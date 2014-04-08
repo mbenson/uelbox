@@ -85,17 +85,30 @@ public class UEL {
     /**
      * Casts context objects per documented convention.
      *
+     * @param <T>
      * @param context
      * @param key
-     * @param <T>
      * @return T
      */
     public static <T> T getContext(ELContext context, Class<T> key) {
-        @SuppressWarnings("unchecked")
-        final T result = (T) context.getContext(key);
-        return result;
+        return getContext(context, key, null);
     }
 
+    /**
+     * Casts context objects per documented convention.
+     *
+     * @param <T>
+     * @param context
+     * @param key
+     * @param defaultValue
+     * @return T
+     */
+    public static <T> T getContext(ELContext context, Class<T> key, T defaultValue) {
+        @SuppressWarnings("unchecked")
+        final T result = (T) context.getContext(key);
+        return result == null ? defaultValue : result;
+    }
+    
     /**
      * Embed the specified expression, if necessary, using '#' as the triggering character.
      *
