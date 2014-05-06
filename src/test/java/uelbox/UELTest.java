@@ -15,15 +15,17 @@
  */
 package uelbox;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+
 import javax.el.ELContext;
 import javax.el.ExpressionFactory;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import uelbox.SimpleELContext;
-import uelbox.UEL;
 
 /**
  * Test {@link UEL}.
@@ -39,22 +41,85 @@ public class UELTest {
     @Test
     public void testGetExpressionFactory() {
         ExpressionFactory expressionFactory = UEL.getExpressionFactory(context);
-        Assert.assertNotNull(expressionFactory);
-        Assert.assertSame(expressionFactory, UEL.getExpressionFactory(context));
+        assertNotNull(expressionFactory);
+        assertSame(expressionFactory, UEL.getExpressionFactory(context));
     }
 
     @Test
     public void testEmbedExpression() {
-        Assert.assertEquals("#{foo[bar].baz}", UEL.embed("foo[bar].baz"));
-        Assert.assertEquals("#{foo[bar].baz}", UEL.embed("#{foo[bar].baz}"));
-        Assert.assertEquals("#{foo[bar].baz}", UEL.embed("${foo[bar].baz}"));
+        assertEquals("#{foo[bar].baz}", UEL.embed("foo[bar].baz"));
+        assertEquals("#{foo[bar].baz}", UEL.embed(" foo[bar].baz "));
+        assertEquals("#{foo[bar].baz}", UEL.embed("#{foo[bar].baz}"));
+        assertEquals("#{foo[bar].baz}", UEL.embed("#{ foo[bar].baz }"));
+        assertEquals("#{foo[bar].baz}", UEL.embed("${foo[bar].baz}"));
+        assertEquals("#{foo[bar].baz}", UEL.embed("${ foo[bar].baz} "));
     }
 
     @Test
     public void testEmbedExpressionWithTrigger() {
-        Assert.assertEquals("#{foo[bar].baz}", UEL.embed("foo[bar].baz", '#'));
-        Assert.assertEquals("#{foo[bar].baz}", UEL.embed("#{foo[bar].baz}", '#'));
-        Assert.assertEquals("#{foo[bar].baz}", UEL.embed("${foo[bar].baz}", '#'));
-        Assert.assertEquals("!{foo[bar].baz}", UEL.embed("${foo[bar].baz}", '!'));
+        assertEquals("#{foo[bar].baz}", UEL.embed("foo[bar].baz", '#'));
+        assertEquals("#{foo[bar].baz}", UEL.embed("#{foo[bar].baz}", '#'));
+        assertEquals("#{foo[bar].baz}", UEL.embed("${foo[bar].baz}", '#'));
+        assertEquals("!{foo[bar].baz}", UEL.embed("${foo[bar].baz}", '!'));
+    }
+
+    @Test
+    public void testStripExpression() {
+        assertEquals("foo[bar].baz", UEL.strip("#{foo[bar].baz}"));
+        assertEquals("foo[bar].baz", UEL.strip(" #{foo[bar].baz} "));
+        assertEquals("foo[bar].baz", UEL.strip("${foo[bar].baz}"));
+        assertEquals("foo[bar].baz", UEL.strip("${ foo[bar].baz }"));
+        assertEquals("foo[bar].baz", UEL.strip("!{foo[bar].baz}"));
+        assertEquals("foo[bar].baz", UEL.strip(" !{foo[bar].baz }"));
+        assertEquals("foo[bar].baz", UEL.strip("@{ foo[bar].baz} "));
+        assertEquals("foo[bar].baz", UEL.strip(" %{ foo[bar].baz } "));
+        assertEquals("foo[bar].baz", UEL.strip("foo[bar].baz"));
+        assertEquals("foo[bar].baz", UEL.strip("\tfoo[bar].baz  "));
+        assertEquals("", UEL.strip("${}"));
+        assertEquals("", UEL.strip("${\n}"));
+        assertEquals("", UEL.strip(""));
+        assertEquals("", UEL.strip(null));
+    }
+
+    @Test
+    public void testIsDelimited() {
+        assertTrue(UEL.isDelimited("#{foo[bar].baz}"));
+        assertTrue(UEL.isDelimited("${foo[bar].baz}"));
+        assertTrue(UEL.isDelimited(" #{foo[bar].baz} "));
+        assertFalse(UEL.isDelimited("foo[bar].baz"));
+        assertFalse(UEL.isDelimited("\t"));
+        assertFalse(UEL.isDelimited(""));
+        assertFalse(UEL.isDelimited(null));
+    }
+
+    @Test
+    public void testGetTrigger() {
+        assertEquals('#', UEL.getTrigger("#{foo[bar].baz}"));
+        assertEquals('$', UEL.getTrigger("${foo[bar].baz}"));
+        assertEquals('#', UEL.getTrigger(" #{foo[bar].baz} "));
+        assertEquals('#', UEL.getTrigger("#{ foo[bar].baz }"));
+        assertEquals('#', UEL.getTrigger("#{ foo[bar].baz} "));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testInvalidGetTrigger() {
+        UEL.getTrigger("foo[bar].baz");
+    }
+
+    @Test
+    public void testJoin() {
+        assertEquals("#{foo[bar].baz}", UEL.join("foo[bar]", "baz"));
+        assertEquals("#{foo[bar].baz}", UEL.join("foo[bar]", ".baz"));
+        assertEquals("#{foo[bar].baz}", UEL.join("foo[bar].", "baz"));
+        assertEquals("#{foo[bar].baz}", UEL.join("foo[bar].", ".baz"));
+        assertEquals("#{foo[bar].baz}", UEL.join("foo", "[bar]", "baz"));
+        assertEquals("#{foo[bar].baz}", UEL.join("foo", "[bar]", ".baz"));
+        assertEquals("#{foo[bar].baz}", UEL.join("foo", "[bar].", "baz"));
+        assertEquals("#{foo[bar].baz}", UEL.join("foo.", "[bar].", ".baz"));
+        assertEquals("#{foo[bar].baz}", UEL.join("foo.", "${ [bar]. }", ".baz"));
+        assertEquals("${foo[bar].baz}", UEL.join("${foo}", "[bar].", ".baz"));
+        assertEquals("${foo[bar].baz}", UEL.join("${foo}", "[bar].", "#{baz}"));
+        assertEquals("${foo[bar].baz}", UEL.join(" ${ foo } ", " [bar] ", " #{ baz\t}\n"));
+        assertEquals("@{foo[bar].baz}", UEL.join('@', " ${ foo } ", " [bar] ", " #{ baz\t}\n"));
     }
 }
