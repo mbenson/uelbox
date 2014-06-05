@@ -15,7 +15,9 @@
  */
 package uelbox;
 
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.el.ELContext;
 import javax.el.ELResolver;
@@ -31,6 +33,13 @@ import org.apache.commons.lang3.Validate;
 public abstract class ELContextWrapper extends ELContext {
     private final ELResolver elResolver;
     private final VariableMapper variableMapper;
+
+    /**
+     * Map in which context objects are potentially stored so that we can remove them if desired.
+     * @see #removeContext(Class)
+     */
+    private Map<Class<?>, Object> contextObjects;
+
     protected final ELContext wrapped;
 
     /**
@@ -83,10 +92,37 @@ public abstract class ELContextWrapper extends ELContext {
     }
 
     @Override
-    @SuppressWarnings("rawtypes")
-    public Object getContext(Class key) {
-        final Object result = super.getContext(key);
+    public Object getContext(@SuppressWarnings("rawtypes") Class key) {
+        if (contextObjects != null && contextObjects.containsKey(key)) {
+            return contextObjects.get(key);
+        }
+        return wrapped.getContext(key);
+    }
+
+    @Override
+    public void putContext(@SuppressWarnings("rawtypes") Class key, Object contextObject) throws NullPointerException {
+        Validate.notNull(contextObject, "context object must not be null");
+        putContextInternal(key, contextObject);
+    }
+
+    /**
+     * Dedicated method for removing a context value, as
+     * {@link #putContext(Class, Object)} is declared to throw {@link NullPointerException} for a {@code null} value.
+     * @param key
+     * @return previously stored context object
+     */
+    public Object removeContext(Class<?> key) {
+        // hide the context objects of a wrapped ELContext by storing a null value:
+        final Object result = putContextInternal(key, null);
         return result == null ? wrapped.getContext(key) : result;
+    }
+
+    private synchronized Object putContextInternal(Class<?> key, Object value) {
+        Validate.notNull(key, "context key must not be null");
+        if (contextObjects == null) {
+            contextObjects = new HashMap<Class<?>, Object>();
+        }
+        return contextObjects.put(key, value);
     }
 
     /**
