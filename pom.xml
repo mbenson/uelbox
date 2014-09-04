@@ -27,7 +27,7 @@
 
   <groupId>com.github.mbenson</groupId>
   <artifactId>uelbox</artifactId>
-  <version>0.3</version>
+  <version>0.4-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>uelbox</name>
